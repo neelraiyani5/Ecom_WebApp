@@ -4,10 +4,9 @@ require("dotenv").config();
 const PORT = process.env.PORT_NUM || 5000;
 const app = express()
 const URL = process.env.MONGO_URI
+const userRoutes = require("./routes/userRoutes")
 
-app.get("/", (req, res) => {
-    res.json({status : true})
-})
+app.use("/user", userRoutes)
 
 app.listen(PORT, () => {
     console.log(`http://localhost:${PORT}`)
