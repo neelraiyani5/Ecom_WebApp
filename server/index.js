@@ -4,8 +4,11 @@ require("dotenv").config();
 const PORT = process.env.PORT_NUM || 5000;
 const app = express()
 const URL = process.env.MONGO_URI
-const userRoutes = require("./routes/userRoutes")
+const userRoutes = require("./routes/userRoutes");
+const cookieParser = require("cookie-parser");
 
+app.use(express.json())
+app.use(cookieParser())
 app.use("/user", userRoutes)
 
 app.listen(PORT, () => {
