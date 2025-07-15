@@ -3,17 +3,22 @@ const { default: mongoose } = require("mongoose");
 require("dotenv").config();
 const PORT = process.env.PORT_NUM || 5000;
 const app = express()
-const URL = process.env.MONGO_URI
+const URL = process.env.MONGO_URI;
 const userRoutes = require("./routes/userRoutes");
 const cookieParser = require("cookie-parser");
 
 app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
 app.use("/user", userRoutes)
 
 app.listen(PORT, () => {
     console.log(`http://localhost:${PORT}`)
 })
+
+// app.use("/",(req,res)=>{
+//     res.send("done");
+// })
 
 // DB Connection
 mongoose.connect(URL)

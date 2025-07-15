@@ -22,8 +22,8 @@ const userControls = {
             const newUser = new userModel({name, email, password : hashedPassword})
             await newUser.save()
 
-            const accessToken = createAccessToken({id : newUser._id})
-            const refreshToken = createRefreshToken({id : newUser._id})
+            const accessToken = createAccessToken({id : user._id})
+            const refreshToken = createRefreshToken({id : user._id})
 
             // const accessToken = jwt.sign({id: newUser._id}, process.env.ACCESS_SECRET_KEY, {expiresIn : '1d'})
             res.cookie("refreshtoken", refreshToken, {
@@ -37,7 +37,7 @@ const userControls = {
             res.status(500).json({status: false, msg : err.message})
         }
     },
-    refreshtoken : (req, res) => {
+    refreshtoken : async(req, res) => {
         try {
             const refToken = req.cookies.refreshtoken;
             if(!refToken)
@@ -52,6 +52,42 @@ const userControls = {
             res.status(500).json({status : false, msg : err.message})
         }
         
+    },
+    login : async(req, res) => {
+        try {
+        const {email, password} = req.body
+        const user = await userModel.findOne({email})
+        if(!user)
+            return res.status(400).json({status : false, msg : "User not found"})
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(!isMatch)
+            return res.status(400).json({status : false, msg : "Password doesn't match"})
+        const accessToken = createAccessToken({id : user._id})
+        const refreshToken = createRefreshToken({id : user._id})
+        res.cookie("refreshtoken", refreshToken, {
+                httpOnly : true,
+                path : "/user/refreshtoken"
+        })
+        res.status(200).json({status : true, msg : "Login successful", accessToken})   
+        } catch (err) {
+            res.status(500).json({status : false, msg : err.message})
+        }
+
+    },
+    logout : async(req, res) => {
+        try {
+           res.clearCookie("refreshtoken", {
+            path : "/user/refreshtoken"
+        }) 
+        res.status(200).json({status : true, msg : "Logout successful"})
+        } catch (err) {
+            res.status(500).json({status : false, msg : err.message})
+        }
+        
+
+    },
+    getUser : async(req, res) => {
+
     }
 }
 
