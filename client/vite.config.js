@@ -7,12 +7,12 @@ export default defineConfig({
   server: {
     proxy : {
       "/api": {
-        target: "http://localhost:8080",
+        target: "https://nextcart-qcqi.onrender.com",
         changeOrigin: true,
         secure: false,
       },
       "/user": {
-        target: "http://localhost:8080",
+        target: "https://nextcart-qcqi.onrender.com",
         changeOrigin: true,
         secure: false,
       }
